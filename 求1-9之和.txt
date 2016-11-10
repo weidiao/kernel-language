@@ -1,0 +1,16 @@
+class Sum{
+	void main(){ 
+		console cout;
+		byte i;
+		byte sum;
+		cout.print(4);
+		i=1;
+		sum=0;
+		while(i.less(10)){
+			sum=sum.add(i);
+			i=i.add(1);
+		}
+		cout.print(sum);
+		return;
+	}
+}

@@ -1,0 +1,44 @@
+class haha{
+	byte a;
+	void main(){ 
+		 console cout;
+		 weidiao wo;
+		 byte i;
+		 byte j;
+		 byte m;
+		 byte n;
+		 i=2;
+		 while(i.less(127)){
+		 	j=2;
+		 	while(j.less(i)){
+		 		m=i;
+		 		n=j;
+		 		if(wo.mod(m,n)){
+		 			goto end;
+		 		}
+		 		j=j.add(1);
+		 	}
+		 	end:
+		 	if(i.equal(j)){
+		 		cout.print(i);
+		 		cout.print(0);
+		 	}
+		 	i=i.add(1);
+		 } 
+		 return ;
+	}
+}  
+class weidiao{
+	byte mod(byte a,byte b){
+		console cout;
+		while(a.larger(b)){
+			a=a.sub(b);
+		}
+		if(a.equal(b)){
+			return 1;
+		}
+		else {
+			return 0;
+		} 
+	}
+}

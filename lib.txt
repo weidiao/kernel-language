@@ -1,0 +1,14 @@
+class byte{
+	byte add(byte a){}
+	byte sub(byte a){}
+	byte mul(byte a){}
+	byte div(byte a){} 
+	byte larger(byte a){}
+	byte less(byte a){}
+	byte equal(byte a){}
+} 
+class void {
+}
+class console{
+	void print(byte a){}
+}
