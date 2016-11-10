@@ -15,8 +15,8 @@
 
 关于文件和目录的说明:
 =======
-* compiler/文件夹是编译器
-* machine/文件夹是虚拟机
+* Kernel.java:编译器源程序
+* Machine.java:虚拟机源程序
 * source.txt:源文件默认是当前路径下的source.txt
 * asm.txt:编译器生成汇编代码,在asm.txt中
 * lib.txt是库函数,每一次编译都会把它和source.txt拼接起来
@@ -25,12 +25,10 @@
 
 如何运行本程序
 =================
-* 因为compiler和machine中有class有同名冲突,所以要在不同文件夹下编译,即
-	
-	cd compiler
-	javac Box.java Kernel.java
-	cd ../machine
+Kernel.java和Machine.java必须分开编译,否则会有命名冲突.
+```
+	javac Kernel.java
 	javac Machine.java
-	cd ..
-	java -cp compiler Kernel
-	java -cp machine Machine
+	java Kernel
+	java Machine
+```

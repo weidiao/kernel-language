@@ -23,11 +23,11 @@ class Cell {
 
 class Variable {
 	String name;
-	Box type;
+	Clazz type;
 	Edge[] edges;
 	Cell[] cells;
 
-	Variable(Box type, String name) {
+	Variable(Clazz type, String name) {
 		this.name = name;
 		this.type = type;
 		cells = new Cell[type.bytes.size()];
@@ -61,12 +61,12 @@ class Variable {
 }
 
 class Fun {
-	Box type;
+	Clazz type;
 	String name;
 	Field[] args;
 	String[] body;
 
-	Fun(Box type, String name) {
+	Fun(Clazz type, String name) {
 		this.name = name;
 		this.type = type;
 	}
@@ -74,21 +74,21 @@ class Fun {
 
 class Field {
 	String name;
-	Box type;
+	Clazz type;
 
-	Field(Box type, String name) {
+	Field(Clazz type, String name) {
 		this.name = name;
 		this.type = type;
 	}
 }
 
-class Box {
+class Clazz {
 	String name;
 	Fun[] funs;
 	ArrayList<Field> fields = new ArrayList<Field>();
 	ArrayList<String> bytes = new ArrayList<String>();
 
-	Box(String name) {
+	Clazz(String name) {
 		this.name = name;
 	}
 }
@@ -209,7 +209,7 @@ public class Machine {
 		}
 
 		void declareCmd(String[] cmd) {
-			Box box = boxFromString(cmd[0]);
+			Clazz box = boxFromString(cmd[0]);
 			if (box.name.equals("byte"))
 				nameSpace.cells.add(new Cell(cmd[1], Memory.getOne()));
 			else
@@ -384,7 +384,7 @@ public class Machine {
 
 	Fun mainFun;
 	Variable mainVar;
-	Box[] boxTable;
+	Clazz[] boxTable;
 	Cell[] constTable;
 	byte retByte;
 	Variable retVar;
@@ -404,7 +404,7 @@ public class Machine {
 	}
 
 	void init() {
-		for (Box box : boxTable)
+		for (Clazz box : boxTable)
 			for (Fun f : box.funs)
 				if (f.name.equals("main")) {
 					mainVar = new Variable(box, "");// ����֮��,����
@@ -415,8 +415,8 @@ public class Machine {
 		System.exit(-1);
 	}
 
-	Box boxFromString(String name) {
-		for (Box box : boxTable)
+	Clazz boxFromString(String name) {
+		for (Clazz box : boxTable)
 			if (box.name.equals(name))
 				return box;
 		return null;
@@ -432,13 +432,13 @@ public class Machine {
 			constTable[i] = new Cell("#" + i, pointer);
 		}
 		int boxNum = Integer.parseInt(cin.next());
-		boxTable = new Box[boxNum];
+		boxTable = new Clazz[boxNum];
 		for (int i = 0; i < boxNum; i++)
-			boxTable[i] = new Box(cin.next());
-		for (Box box : boxTable) {
+			boxTable[i] = new Clazz(cin.next());
+		for (Clazz box : boxTable) {
 			int fieldNum = Integer.parseInt(cin.next());
 			for (int i = 0; i < fieldNum; i++) {
-				Box b = boxFromString(cin.next());
+				Clazz b = boxFromString(cin.next());
 				if (b.name.equals("byte")) {
 					box.bytes.add(cin.next());
 				} else {
@@ -469,7 +469,7 @@ public class Machine {
 		for (Cell c : constTable)
 			o(Memory.all[c.pointer] + " ");
 		oline("");
-		for (Box box : boxTable) {
+		for (Clazz box : boxTable) {
 			oline(box.name);
 			for (Field fi : box.fields) {
 				oline("\t" + fi.type + " " + fi.name);
