@@ -1,144 +1,147 @@
-import java.io.*;
-import java.util.*;
-
-class Edge {
-	Variable var;
-	String name;
-
-	Edge(String name, Variable var) {
-		this.var = var;
-		this.name = name;
-	}
-}
-
-class Cell {
-	int pointer;
-	String name;
-
-	Cell(String name, int pointer) {
-		this.pointer = pointer;
-		this.name = name;
-	}
-}
-
-class Variable {
-	String name;
-	Clazz type;
-	Edge[] edges;
-	Cell[] cells;
-
-	Variable(Clazz type, String name) {
-		this.name = name;
-		this.type = type;
-		cells = new Cell[type.bytes.size()];
-		edges = new Edge[type.fields.size()];
-		for (int i = 0; i < cells.length; i++)
-			cells[i] = new Cell(type.bytes.get(i), Memory.getOne());
-		for (int i = 0; i < edges.length; i++)
-			edges[i] = new Edge(type.fields.get(i).name, null);
-	}
-
-	Cell getCell(String s) {
-		for (Cell c : cells)
-			if (c.name.equals(s))
-				return c;
-		return null;
-	}
-
-	Edge getEdge(String s) {
-		for (Edge e : edges)
-			if (e.name.equals(s))
-				return e;
-		return null;
-	}
-
-	Fun getFun(String s) {
-		for (Fun f : type.funs)
-			if (f.name.equals(s))
-				return f;
-		return null;
-	}
-}
-
-class Fun {
-	Clazz type;
-	String name;
-	Field[] args;
-	String[] body;
-
-	Fun(Clazz type, String name) {
-		this.name = name;
-		this.type = type;
-	}
-}
-
-class Field {
-	String name;
-	Clazz type;
-
-	Field(Clazz type, String name) {
-		this.name = name;
-		this.type = type;
-	}
-}
-
-class Clazz {
-	String name;
-	Fun[] funs;
-	ArrayList<Field> fields = new ArrayList<Field>();
-	ArrayList<String> bytes = new ArrayList<String>();
-
-	Clazz(String name) {
-		this.name = name;
-	}
-}
-
-class NameSpace {
-	ArrayList<Edge> edges = new ArrayList<Edge>();
-	ArrayList<Cell> cells = new ArrayList<Cell>();
-
-	Cell getCell(String s) {
-		for (Cell c : cells)
-			if (c.name.equals(s))
-				return c;
-		return null;
-	}
-
-	Edge getEdge(String s) {
-		for (Edge e : edges)
-			if (e.name.equals(s))
-				return e;
-		return null;
-	}
-}
-
-class Memory {
-	static byte[] all = new byte[10000];
-	static boolean[] free = new boolean[10000];
-
-	static void init() {
-		for (int i = 0; i < free.length; i++)
-			free[i] = true;
-	}
-
-	static int getOne() {
-		for (int i = 0; i < all.length; i++)
-			if (free[i]) {
-				free[i] = false;
-				return i;
-			}
-		System.out.println("memory used up");
-		System.exit(-1);
-		return 0;
-	}
-}
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Machine {
+	class Edge {
+		Variable var;
+		String name;
+
+		Edge(String name, Variable var) {
+			this.var = var;
+			this.name = name;
+		}
+	}
+
+	class Cell {
+		int pointer;
+		String name;
+
+		Cell(String name, int pointer) {
+			this.pointer = pointer;
+			this.name = name;
+		}
+	}
+
+	class Variable {
+		String name;
+		Box type;
+		Edge[] edges;
+		Cell[] cells;
+
+		Variable(Box type, String name) {
+			this.name = name;
+			this.type = type;
+			cells = new Cell[type.bytes.size()];
+			edges = new Edge[type.fields.size()];
+			for (int i = 0; i < cells.length; i++)
+				cells[i] = new Cell(type.bytes.get(i), Memory.getOne());
+			for (int i = 0; i < edges.length; i++)
+				edges[i] = new Edge(type.fields.get(i).name, null);
+		}
+
+		Cell getCell(String s) {
+			for (Cell c : cells)
+				if (c.name.equals(s))
+					return c;
+			return null;
+		}
+
+		Edge getEdge(String s) {
+			for (Edge e : edges)
+				if (e.name.equals(s))
+					return e;
+			return null;
+		}
+
+		Fun getFun(String s) {
+			for (Fun f : type.funs)
+				if (f.name.equals(s))
+					return f;
+			return null;
+		}
+	}
+
+	class Fun {
+		Box type;
+		String name;
+		Field[] args;
+		String[] body;
+
+		Fun(Box type, String name) {
+			this.name = name;
+			this.type = type;
+		}
+	}
+
+	class Field {
+		String name;
+		Box type;
+
+		Field(Box type, String name) {
+			this.name = name;
+			this.type = type;
+		}
+	}
+
+	class Box {
+		String name;
+		Fun[] funs;
+		ArrayList<Field> fields = new ArrayList<Field>();
+		ArrayList<String> bytes = new ArrayList<String>();
+
+		Box(String name) {
+			this.name = name;
+		}
+	}
+
+	class NameSpace {
+		ArrayList<Edge> edges = new ArrayList<Edge>();
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+
+		Cell getCell(String s) {
+			for (Cell c : cells)
+				if (c.name.equals(s))
+					return c;
+			return null;
+		}
+
+		Edge getEdge(String s) {
+			for (Edge e : edges)
+				if (e.name.equals(s))
+					return e;
+			return null;
+		}
+	}
+
+	static class Memory {
+		static byte[] all = new byte[10000];
+		static boolean[] free = new boolean[10000];
+
+		static void init() {
+			for (int i = 0; i < free.length; i++)
+				free[i] = true;
+		}
+
+		static int getOne() {
+			for (int i = 0; i < all.length; i++)
+				if (free[i]) {
+					free[i] = false;
+					return i;
+				}
+			System.out.println("memory used up");
+			System.exit(-1);
+			return 0;
+		}
+	}
+
 	class Process {
 		NameSpace nameSpace = new NameSpace();
 		Variable nowVar;
-		Fun nowFun; 
-		
+		Fun nowFun;
+
 		public Process(Variable mainVar, Fun mainFun, NameSpace names) {
 			nowVar = mainVar;
 			nowFun = mainFun;
@@ -151,9 +154,11 @@ public class Machine {
 				nameSpace.cells.add(c);
 			nameSpace.edges.add(new Edge("this", nowVar));
 		}
-		void output(){
-			
+
+		void output() {
+
 		}
+
 		void fieldCmd(String[] cmd) {
 			Edge whose = nameSpace.getEdge(cmd[2]);
 			if (whose.var.getCell(cmd[3]) != null) {
@@ -209,12 +214,11 @@ public class Machine {
 		}
 
 		void declareCmd(String[] cmd) {
-			Clazz box = boxFromString(cmd[0]);
+			Box box = boxFromString(cmd[0]);
 			if (box.name.equals("byte"))
 				nameSpace.cells.add(new Cell(cmd[1], Memory.getOne()));
 			else
-				nameSpace.edges
-						.add(new Edge(cmd[1], new Variable(box, cmd[1])));
+				nameSpace.edges.add(new Edge(cmd[1], new Variable(box, cmd[1])));
 		}
 
 		void callCmd(String[] cmd) {
@@ -290,15 +294,16 @@ public class Machine {
 				break;
 			}
 		}
-		void output(String s){
+
+		void output(String s) {
 			try {
-				cout.write(s+"\n");
+				cout.write(s + "\n");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		void run() { 
+
+		void run() {
 			output("**********");
 			int i = 0;
 			while (true) {
@@ -342,12 +347,10 @@ public class Machine {
 			NameSpace names = new NameSpace();
 			for (int j = 3; j < cmd.length; j++)
 				if (f.args[j - 3].type.name.equals("byte")) {
-					Cell c = new Cell(f.args[j - 3].name,
-							nameSpace.getCell(cmd[j]).pointer);
+					Cell c = new Cell(f.args[j - 3].name, nameSpace.getCell(cmd[j]).pointer);
 					names.cells.add(c);
 				} else {
-					Edge e = new Edge(f.args[j - 3].name,
-							nameSpace.getEdge(cmd[j]).var);
+					Edge e = new Edge(f.args[j - 3].name, nameSpace.getEdge(cmd[j]).var);
 					names.edges.add(e);
 				}
 			return names;
@@ -384,7 +387,7 @@ public class Machine {
 
 	Fun mainFun;
 	Variable mainVar;
-	Clazz[] boxTable;
+	Box[] boxTable;
 	Cell[] constTable;
 	byte retByte;
 	Variable retVar;
@@ -399,12 +402,12 @@ public class Machine {
 		input("asm.txt");
 		debugInput();
 		init();
-		cout=new FileWriter(new File("process.txt"));
+		cout = new FileWriter(new File("process.txt"));
 		new Process(mainVar, mainFun, new NameSpace()).run();
 	}
 
 	void init() {
-		for (Clazz box : boxTable)
+		for (Box box : boxTable)
 			for (Fun f : box.funs)
 				if (f.name.equals("main")) {
 					mainVar = new Variable(box, "");// ����֮��,����
@@ -415,8 +418,8 @@ public class Machine {
 		System.exit(-1);
 	}
 
-	Clazz boxFromString(String name) {
-		for (Clazz box : boxTable)
+	Box boxFromString(String name) {
+		for (Box box : boxTable)
 			if (box.name.equals(name))
 				return box;
 		return null;
@@ -432,13 +435,13 @@ public class Machine {
 			constTable[i] = new Cell("#" + i, pointer);
 		}
 		int boxNum = Integer.parseInt(cin.next());
-		boxTable = new Clazz[boxNum];
+		boxTable = new Box[boxNum];
 		for (int i = 0; i < boxNum; i++)
-			boxTable[i] = new Clazz(cin.next());
-		for (Clazz box : boxTable) {
+			boxTable[i] = new Box(cin.next());
+		for (Box box : boxTable) {
 			int fieldNum = Integer.parseInt(cin.next());
 			for (int i = 0; i < fieldNum; i++) {
-				Clazz b = boxFromString(cin.next());
+				Box b = boxFromString(cin.next());
 				if (b.name.equals("byte")) {
 					box.bytes.add(cin.next());
 				} else {
@@ -452,8 +455,7 @@ public class Machine {
 				int argNum = Integer.parseInt(cin.next());
 				box.funs[i].args = new Field[argNum];
 				for (int j = 0; j < argNum; j++)
-					box.funs[i].args[j] = new Field(boxFromString(cin.next()),
-							cin.next());
+					box.funs[i].args[j] = new Field(boxFromString(cin.next()), cin.next());
 				int bodySize = Integer.parseInt(cin.next());
 				cin.nextLine();
 				box.funs[i].body = new String[bodySize];
@@ -469,7 +471,7 @@ public class Machine {
 		for (Cell c : constTable)
 			o(Memory.all[c.pointer] + " ");
 		oline("");
-		for (Clazz box : boxTable) {
+		for (Box box : boxTable) {
 			oline(box.name);
 			for (Field fi : box.fields) {
 				oline("\t" + fi.type + " " + fi.name);

@@ -10,7 +10,7 @@
 * 只有类,像java一样
 * 函数中变量定义只能放在函数开头部分
 * 原始数据类型只有byte,像int,double可以用byte来实现.
-* 没有数组,这点是最差的地方.但是有链表
+* 没有数组,这点是最差的地方.但是可以自己定义链表
 * 全部库函数都在lib.txt中
 
 关于文件和目录的说明:
@@ -24,11 +24,9 @@
 * 给出了两个示例程序,一个打印127以内的全部质数,另一个计算从1加到9的和.
 
 如何运行本程序
-=================
-Kernel.java和Machine.java必须分开编译,否则会有命名冲突.
+================= 
 ```
-	javac Kernel.java
-	javac Machine.java
+	javac Kernel.java Machine.java
 	java Kernel
 	java Machine
 ```
